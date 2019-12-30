@@ -1,28 +1,31 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# 爬取必应每日背景并设置为桌面壁纸
+# 爬取照片并设置为桌面壁纸
 import requests
 import os
-import datetime
+import time
 import win32api, win32con, win32gui
 from bs4 import BeautifulSoup
 
-def get_pic():
+# 必应每日壁纸
+biying = "https://api.dujin.org/bing/1920.php"
+# 随机图片
+lore = "http://lorempixel.com/1920/1080/"
+# 随机风景图
+view = "https://api.ixiaowai.cn/gqapi/gqapi.php"
+# 随机动漫壁纸
+acg = "https://img.xjh.me/random_img.php?type=bg&ctype=nature&return=302"
 
-	url = "https://cn.bing.com"
-	headers = {
-		'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0'
-	}
-	# 获取必应背景图片的源地址
-	res = requests.get(url, headers=headers)
-	soup = BeautifulSoup(res.text, 'lxml')
-	pic_url = url + soup.find_all(id='bgImgProgLoad')[0].get('data-ultra-definition-src')
-	# 图片路径信息，图片名称为当天日期
-	today = datetime.date.today()
-	pic_path = "E:\\code\\Python\\picture\\" + str(today) + '.bmp'
+headers = {
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0'
+}
 
+def get_pic(url):
+	# 随机风景图
+	pic_url = url
+	pic_path = "E:\\code\\Python\\picture\\" + str(int(time.time())) + '.bmp'
 	with open(pic_path, 'wb') as pic:
-		pic_res = requests.get(pic_url)
+		pic_res = requests.get(pic_url, headers = headers)
 		pic.write(pic_res.content)
 	return pic_path
 
@@ -35,5 +38,5 @@ def set_pic(pic_path):
 	win32gui.SystemParametersInfo(win32con.SPI_SETDESKWALLPAPER, pic_path, win32con.SPIF_SENDWININICHANGE)
 
 if __name__ == '__main__':
-	set_pic(get_pic())
+	set_pic(get_pic(acg))
 
